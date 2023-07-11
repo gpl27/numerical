@@ -77,6 +77,32 @@ function [x] = secante(f, x0, x1, delta, N)
     error('Número máximo de iterações excedido!')
 endfunction
 
+function [x] = bairstow(a, alpha0, beta0, TOL, N)
+    for j = 1:N
+        n = length(a);
+        b(1) = a(1);
+        b(2) = a(2) + alpha0*b(1);
+        for i = 3:n
+            b(i) = a(i) + alpha0*b(i-1) + beta0*b(i-2);
+        end
+        c(1) = b(1);
+        c(2) = b(2) + alpha0*c(1);
+        for i = 3:n
+            c(i) = b(i) + alpha0*c(i-1) + beta0*c(i-2);
+        end
+        // Calcular alpha1 e beta1
+        delta = inv([c(n-2), c(n-3); c(n-1), c(n-2)])*[-b(n-1);-b(n)];
+        alpha0 = alpha0 + delta(1);
+        beta0 = beta0 + delta(2);
+        if (b(n) <= TOL && b(n-1) <= TOL)
+            x(1) = (alpha0 + sqrt(alpha0**2 + 4*beta0))/2;
+            x(2) = (alpha0 - sqrt(alpha0**2 + 4*beta0))/2;
+            x = return(x)
+        end
+    end
+    error('Número máximo de iterações excedido!')
+endfunction
+
 // Exemplo solucao de sistemas
 // 10x - 9y = 1
 // -9x + 10y = 1
