@@ -103,49 +103,25 @@ function [x] = bairstow(a, alpha0, beta0, TOL, N)
     error('Número máximo de iterações excedido!')
 endfunction
 
-// Exemplo solucao de sistemas
-// 10x - 9y = 1
-// -9x + 10y = 1
-
-// Solucao usando Jacobi
+// Jacobi
 x = 0; y = 0;
 for i = 1:20
     xn = (1+9*y)/10;
     yn = (1+9*x)/10;
     x = xn; y = yn;
 end
-disp('Jacobi:')
-x
-y
-
-// Solucao usando Gauss-Seidel
+// Gauss-Seidel
 x = 0; y = 0;
 for i = 1:20
     x = (1+9*y)/10;
     y = (1+9*x)/10;
 end
-disp('Gauss-Seidel:')
-x
-y
 
-// Solucao usando SOR e Jacobi
-x = 0; y = 0; w = 4/3;
-for i = 1:20
-    xn = (1 - w)*x + w*((9*y + 1)/10);
-    yn = (1 - w)*y + w*((9*x + 1)/10);
-    x = xn; y = yn;
-end
-disp('SOR e Jacobi:')
-x
-y
-
-// Solucao usando SOR e Gauss-Seidel
+// Gauss-Seidel
 x = 0; y = 0; w = 4/3;
 for i = 1:20
     xn = (1 - w)*x + w*((9*y + 1)/10);
     yn = (1 - w)*y + w*((9*xn + 1)/10);
     x = xn; y = yn;
 end
-disp('SOR e Gauss-Seidel:')
-x
-y
+

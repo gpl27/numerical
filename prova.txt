@@ -1,0 +1,46 @@
+QUESTAO 01:
+    Converter de decimal para binario.
+    Tipos de erros:
+        Erro Absoluto: é o módulo da diferença entre o valor real e a aproximação.
+    Também pode ser o módulo da diferença entra uma iteração e outra em métodos iterativos.
+        Erro Relativo: é o módulo da diferenca entre o valor real e a aproximação sobre o
+    módulo da aproximação. Também pode ser o módulo da diferença entre uma iteração e outra sobre
+    o módulo da última iteração.
+    A partir da definição de erro relativo, podemos obter o DIGSE, ou seja, o número de dígitos
+significativos exatos de um número. Dizemos que um número tem n dígitos significativos exatos se
+o ER <= 0.5 * 10**-n
+
+QUESTAO 02:
+    Resolver um equação.
+    Bisseção: fácil implementação e aplicação. Precisa ter um intervalo que contém exatamente uma
+raíz real e converge mais lentamente, porém com certeza converge.
+    Posição falsa: mesmos pros e contras da bisseção, porém um pouco mais elaborado.
+    Newton-Raphson/Newton-Viete: eficiente por sua simplicidade e velocidade de convergência (quadrática)
+Todavia, é preciso saber a derivada da função. Pode divergir quando a derivada tende a 0.
+    Secantes: parecido com o método de Newton, porém a derivada é calculada de forma aproximada. É quase
+tão rápido quanto o método de Newton.
+    Ponto-fixo/Iteração linear: fácil implementação porém pode não convergir. É preciso fazer a escolha certa
+de qual x isolar (melhor evitar os x de menor ordem)
+    Bairstow: o único que método que cálcula raízes complexas. Caro comptuacionalmente. Ademais, as escolhas de
+alpha0 e beta0 são extremamente importantes, podendo dificultar extremamente a convergência.
+
+QUESTAO 03:
+    Resolver um sistema linear.
+    Eliminação Gaussiana: garantidamente resolve o sistema, todavia possui custo computacional cúbico, então
+só serve para resolver problemas de ordem 10.
+    Fatoração LU: Transforma a matriz A em duas cujo formato facilita contas. Todavia, essa transformação pode
+ser tão custosa quanto resolver o próprio sistema.
+    Método de Jacobi: método iterativo, ou seja, bom para sistemas de maior porte, especialmente quando as
+matrizes são esparsas. 
+    Gauss-Seidel: também iterativo, portanto é bom para sistemas de grande porte e possui uma convergência
+mais rápida que Jacobi.
+    SOR/SUB aplicado a Gauss-Seidel: é uma técnica de aceleração para métodos iterativos. Ou seja, pode, ou não,
+facilitar a convergência. A esoclha do valor do parametro de sub/sobre-relaxação não é óbvia e é fundamental para
+a convergência.
+
+QUESTAO 04:
+    Resolver um sistema não linear.
+    Regra de Cramer: requer o cálculo de vários determinantes, o que é custoso.
+    Método de Newton: é preciso saber calcular as derivadas de todas as funções do sistema.
+    Ponto-fixo aplicado a Gauss-Seidel: método de mais fácil implementação e boa convergência.
+
