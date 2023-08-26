@@ -120,5 +120,113 @@ disp(simpson(A, 0.1));
 
 
 // Equacoes diferenciais
+// Euler O(h)
+deff('yn = yl(t, y)', 'yn = 2 - t + 3*y');
+h = 0.1; x = 0:h:0.2; y(1) = 1;
+for i = 2:length(x)
+   y(i) = y(i-1) + h*yl(x(i-1), y(i-1)); 
+end
+disp(y);
 
+// Problema de exemplo:
+// y em [0,1] com h = 0.1
+//    yl = -x*y
+//    y(0) = 1
+
+// Runge-Kutta 2 - O(h**2)
+deff('yn = yl(x, y)', 'yn = -x*y');
+x = 0:0.1:1; h = 0.1; y(1) = 1;
+for i = 2:length(x)
+    k1 = h*yl(x(i-1), y(i-1));
+    k2 = h*yl(x(i-1)+h, y(i-1)+k1);
+    y(i) = y(i-1) + ((k1 + k2)/2);
+end
+disp(y);
+
+// Runge-Kutta 4 - O(h**4)
+deff('yn = yl(x, y)', 'yn = -x*y');
+x = 0:0.1:1; h = 0.1; y(1) = 1;
+for i = 2:length(x)
+    k1 = yl(x(i-1), y(i-1));
+    k2 = yl(x(i-1)+h/2, y(i-1)+(h/2)*k1);
+    k3 = yl(x(i-1)+h/2, y(i-1)+(h/2)*k2);
+    k4 = yl(x(i-1)+h, y(i-1)+h*k3);
+    y(i) = y(i-1) + (h/6)*(k1 + 2*k2 + 2*k3 + k4);
+end
+disp(y);
+y = [];
+
+// Adams / Predição Correção
+// Problema de Exemplo:
+// y(0.4) com h = 0.1
+//    yl = -x*y
+//    y(0) = 1
+
+// Primeiro usar Runge-Kutta 4 para encontrar estimativas de [yn-3, yn]
+deff('yn = yl(x, y)', 'yn = -x*y');
+h = 0.1; x = 0:h:0.3; y(1) = 1; n = length(x);
+for i = 2:n
+    k1 = yl(x(i-1), y(i-1));
+    k2 = yl(x(i-1)+h/2, y(i-1)+(h/2)*k1);
+    k3 = yl(x(i-1)+h/2, y(i-1)+(h/2)*k2);
+    k4 = yl(x(i-1)+h, y(i-1)+h*k3);
+    y(i) = y(i-1) + (h/6)*(k1 + 2*k2 + 2*k3 + k4); 
+end
+
+// Usar formula de Adams-Bashforth para encontrar uma estimativa de yn+1 e portanto de fn+1 (predicao)
+y(n+1) = y(n) + (h/24)*(55*yl(x(n), y(n)) - 59*yl(x(n-1), y(n-1)) + 37*yl(x(n-2), y(n-2)) - 9*yl(x(n-3), y(n-3)));
+disp(y(n+1));
+
+// Usar formula de Adams-Moulton para obter um valor mais preciso de yn+1 (correcao)
+y(n+1) = y(n) + (h/24)*(9*yl(x(n)+h, y(n+1)) + 19*yl(x(n), y(n)) - 5*yl(x(n-1), y(n-1)) + yl(x(n-2), y(n-2)));
+disp(y);
+
+// Transforma-se equacoes diferenciais de ordens maiores em sistemas de equacoes diferenciais de primeira ordem
+// Sistemas de equacoes diferenciais
+// Problema de Exemplo:
+//    xll(t) + 4*xl(t) + 5*x(t) = 0
+//    x(0) = 3
+//    xl(0) = -5
+// substituindo xl(t) = y(t)
+//    xl = y
+//    yl = -5*x - 4*y
+//    x(0) = 3
+//    y(0) = -5
+deff('xl = f(t, x, y)', 'xl = y');
+deff('yl = g(t, x, y)', 'yl = -5*x - 4*y');
+h = 0.1; t = 0:h:5; x(1) = 3; y(1) = -5; n = length(t);
+for i = 2:n
+    k1 = f(t(i-1), x(i-1), y(i-1));
+    l1 = g(t(i-1), x(i-1), y(i-1));
+    k2 = f(t(i-1)+h/2, x(i-1)+(h*k1)/2, y(i-1)+(h*l1)/2);
+    l2 = g(t(i-1)+h/2, x(i-1)+(h*k1)/2, y(i-1)+(h*l1)/2);
+    k3 = f(t(i-1)+h/2, x(i-1)+(h*k2)/2, y(i-1)+(h*l2)/2);
+    l3 = g(t(i-1)+h/2, x(i-1)+(h*k2)/2, y(i-1)+(h*l2)/2);
+    k4 = f(t(i-1)+h, x(i-1)+h*k3, y(i-1)+h*l3);
+    l4 = g(t(i-1)+h, x(i-1)+h*k3, y(i-1)+h*l3);
+    x(i) = x(i-1) + (h/6)*(k1 + 2*k2 + 2*k3 + k4);
+    y(i) = y(i-1) + (h/6)*(l1 + 2*l2 + 2*l3 + l4);
+end
+disp(x(1), x(11), x(n));
+
+
+// Otimizacao
+function [r] = aurea(f, a, b, TOL)
+    phi = (1+sqrt(5))/2;
+    L = b - a;
+    while L > TOL
+        atil = b - L/phi; btil = a + L/phi;
+        fatil = f(atil); fbtil = f(btil);
+        if fatil < fbtil
+            b = btil;
+        elseif fatil > fbtil
+            a = atil;
+        else
+            a = atil; b = btil;
+        end
+        L = b - a;
+    end
+    minimizador = (a + b)/2;
+    r = return([a, b])
+endfunction
 
